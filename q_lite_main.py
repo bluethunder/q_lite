@@ -117,7 +117,6 @@ current_system = config_properties["current_system"]
 
 # Global variables
 choice = 0
-current_system = ""
 num_updates = 0
 
 functions = {
