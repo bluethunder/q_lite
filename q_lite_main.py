@@ -137,11 +137,11 @@ while(choice != exit_choice):
     if choice != 0:
         print("Your choice was {}.".format(main_menu_choices[choice]))
 
-    if main_menu_choices[choice] == "List All":
-        functions[main_menu_choices[choice]](current_system)
-    else:
-        functions[main_menu_choices[choice]]()
-    
-    if main_menu_choices[choice] != "Exit":
-        input("Press enter to continue")
-        clear()
+        if main_menu_choices[choice] == "List All":
+            functions[main_menu_choices[choice]](current_system)
+        else:
+            functions[main_menu_choices[choice]]()
+        
+        if main_menu_choices[choice] != "Exit":
+            input("Press enter to continue")
+            clear()
