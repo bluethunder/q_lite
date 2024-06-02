@@ -36,8 +36,9 @@ def show_results(query):
     if len(games) == 0:
         print("Could not find games starting with that letter")
     else:
+        print("=" * 80)
         for game in games:
-            print("{:<4} | {:<77} \n{}".format(game[0], game[1], game[3]))
+            print("{:<4} | {:<56} | {:<20}\n{}".format(game[0], game[1], game[2], game[3]))
             print("=" * 80)
 
 def get_all_games():
