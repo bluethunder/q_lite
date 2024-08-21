@@ -1,6 +1,7 @@
 import sqlite3
 import openpyxl as xl
 import os
+import pandas as pd
 from datetime import datetime
 
 con = sqlite3.connect("game.db")
@@ -170,4 +171,14 @@ def backup_database():
     with open(backup_file, 'w') as f:
         for line in con.iterdump():
             f.write('%s\n' % line)
+    
+def export_to_xls():
+    query = """
+        SELECT game_id, name, system, notes
+        FROM game
+    """
+    
+    df = pd.read_sql_query(query, con)
+    
+    df.to_excel("my_games.xlsx")
     
