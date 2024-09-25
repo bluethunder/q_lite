@@ -1,7 +1,7 @@
 import db_functions as db
 import itertools
 import os
-
+import platform
 
 def chunker_longest(iterable, chunksize):
     return itertools.zip_longest(*[iter(iterable)] * chunksize)
@@ -130,7 +130,11 @@ functions = {
 }
 main_menu_choices = [""] + list(functions.keys())
 exit_choice = main_menu_choices.index("Exit")
-clear = lambda: os.system('cls')
+
+if platform.system() == 'Linux':
+    Clear = lambda: os.system('clear')
+else:
+    clear = lambda: os.system('cls')
 
 while(choice != exit_choice):
     choice = main_menu()

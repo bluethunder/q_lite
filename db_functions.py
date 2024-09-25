@@ -1,6 +1,7 @@
 import sqlite3
 import openpyxl as xl
 import os
+import platform
 from datetime import datetime
 
 con = sqlite3.connect("game.db")
@@ -28,7 +29,11 @@ def insert_game(name, system, notes):
     )
     
     con.commit()
-    
+def get_results(query):
+    results = cur.execute(query)
+    entries = results.fetchall()    
+    return entries
+
 def show_results(query):
     results = cur.execute(query)
     games = results.fetchall()
@@ -102,12 +107,18 @@ def update_game_notes(game_notes, game_id):
     con.commit()
     
 def get_systems(): 
+    query = "SELECT DISTINCT system from game"
+    results = cur.execute(query)
+    entries = results.fetchall()   
+    systems = [""] + [system[0] for system in entries] 
+    """ 
     wb = xl.load_workbook(filename="game_data.xlsx")
     system_names = wb.sheetnames
     wb.close()
     systems = [""] + system_names
     systems_to_delete = ["PriceTotals", "Systems", "Accessories", "Wish List", "Kelly", "TODO", "Blue_TODO", "Loss"]
     systems = [system for system in systems if system not in systems_to_delete]
+    """
     return systems
 
 def migrate_system_to_db(system):
@@ -135,7 +146,19 @@ def migrate_system_to_db(system):
 
     print("count:", game_count )
     wb.close()
-    
+
+def export_to_excel():
+    wb = xl.Workbook()
+    for system in get_systems():
+        if system == "":
+            continue
+        wb.create_sheet(system)
+        ws = wb[system]
+        query = "SELECT game_id, name, system, notes FROM game WHERE system = '{}'".format(system)
+        for game in get_results(query): 
+            ws.append(game)
+    wb.save("exported_games.xlsx")
+     
 def show_headers():
     wb = xl.load_workbook(filename="game_data.xlsx")
     systems = get_systems()
@@ -165,7 +188,11 @@ def backup_database():
         os.mkdir("database_backups")
     
     timestamp = datetime.now().strftime('%m_%d_%Y_%I_%M_%p')
-    backup_file = "database_backups\{}_{}.sql".format("game_database", timestamp)
+    if platform.system() == 'Linux':
+        backup_file = "database_backups/{}_{}.sql".format("game_database", timestamp)
+    else:
+        backup_file = "database_backups\{}_{}.sql".format("game_database", timestamp)
+        
     print("Backing up database to file:\n\t", backup_file)
     with open(backup_file, 'w') as f:
         for line in con.iterdump():
